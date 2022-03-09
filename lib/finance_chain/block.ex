@@ -47,6 +47,10 @@ defmodule FinanceChain.BlockChain.Block do
     __MODULE__.new(get_timestamp(), last_hash, data)
   end
 
+  def block_hash(block = %__MODULE__{}) do
+    block.hash
+  end
+
   # private functions
   defp add_timestamp(%__MODULE__{} = block, timestamp), do: %{block | timestamp: timestamp}
 

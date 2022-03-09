@@ -1,4 +1,4 @@
-defmodule ExChain.BlockchainTest do
+defmodule BlockChain.BlockchainTest do
   @moduledoc """
   This module contains test related to a blockchain
   """
@@ -26,12 +26,99 @@ defmodule ExChain.BlockchainTest do
     end
 
     test "adds a new block", %{blockchain: blockchain} do
-      data = "foo"
+      data = %Wallet{
+        origin: 0,
+        destination: 1,
+        amount: 1,
+      }
       blockchain = BlockChain.add_block(blockchain, data)
       [_, block] = blockchain.chain
       assert block.data == data
     end
+
+    test "validate a chain", %{blockchain: blockchain} do
+      # add block into blockchain
+      blockchain = BlockChain.add_block(blockchain, %Wallet{
+        origin: 0,
+        destination: 0,
+        amount: 100,
+      })
+      # assert if blockchain is valid
+      assert BlockChain.valid_chain?(blockchain)
+    end
+
+
+    test "when we temper hash in existing chain", %{
+      blockchain: blockchain
+    } do
+      blockchain =
+        blockchain
+        |> BlockChain.add_block(%Wallet{
+          origin: 0,
+          destination: 0,
+          amount: 100,
+        })
+        |> BlockChain.add_block(%Wallet{
+          origin: 0,
+          destination: 0,
+          amount: 100,
+        })
+
+        |> BlockChain.add_block(%Wallet{
+          origin: 0,
+          destination: 0,
+          amount: 100,
+        })
+
+      # validate if blockchain is valid
+      assert BlockChain.valid_chain?(blockchain)
+      # temper the blockchain, assume at location 2
+      index = 2
+      tempered_block = put_in(Enum.at(blockchain.chain, index).hash, %Wallet{
+        origin: 0,
+        destination: 0,
+        amount: 100,
+      })
+
+      blockchain = %BlockChain{chain: List.replace_at(blockchain.chain, index, tempered_block)}
+
+      # should invalidate the blockchain
+      refute BlockChain.valid_chain?(blockchain)
+    end
+
+    test "count total amoun for origin",%{
+      blockchain: blockchain
+    } do
+      blockchain =
+        blockchain
+        |> BlockChain.add_block(%Wallet{
+          origin: 1,
+          destination: 0,
+          amount: 100,
+        })
+        |> BlockChain.add_block(%Wallet{
+          origin: 1,
+          destination: 0,
+          amount: 100,
+        })
+
+        |> BlockChain.add_block(%Wallet{
+          origin: 0,
+          destination: 1,
+          amount: 100,
+        })
+        |> BlockChain.add_block(%Wallet{
+          origin: 0,
+          destination: 1,
+          amount: 100,
+        })
+
+      assert BlockChain.total_amount(blockchain, 0) == 200 && BlockChain.total_amount(blockchain, 1) == 200
+    end
+
   end
+
+
 
   defp initialize_blockchain(context), do: Map.put(context, :blockchain, BlockChain.new())
 end
