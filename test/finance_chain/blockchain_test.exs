@@ -86,7 +86,7 @@ defmodule BlockChain.BlockchainTest do
       refute BlockChain.valid_chain?(blockchain)
     end
 
-    test "count total amoun for origin",%{
+    test "count total amoun for origin and destination",%{
       blockchain: blockchain
     } do
       blockchain =
