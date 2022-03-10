@@ -28,20 +28,22 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 FinanceChain.BlockChain.Server.get_blockchain(FinanceChain.BlockChain.Server)
 
-FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.get_blockchain()
+FinanceChain.BlockChain.Server 
+|> FinanceChain.BlockChain.Server.get_blockchain()
 
 
-FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.get_blockchain() |> FinanceChain.BlockChain.total_amount(0)
+FinanceChain.BlockChain.Server 
+|> FinanceChain.BlockChain.Server.get_blockchain() 
+|> FinanceChain.BlockChain.total_amount(0)
 
-pid = FinanceChain.BlockChain.Server
-FinanceChain.BlockChain.Server.send_money(pid,%{
+FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.send_money(%{
   origin: 1,
   destiny: 0,
   amount: 1000
 })
 
 
-FinanceChain.BlockChain.Server.send_money(FinanceChain.BlockChain.Server,%{ origin: 1, destination: 1, amount: 10})
+FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.send_money(%{ origin: 1, destination: 1, amount: 10})
 
 ```
 
