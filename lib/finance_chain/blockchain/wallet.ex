@@ -9,7 +9,8 @@ defmodule FinanceChain.BlockChain.Wallet do
           origin:  Int.t(),
           destination: Int.t(),
           amount: Int.t(),
+          signature: String.t()
         }
 
-  defstruct ~w(origin destination amount)a
+  defstruct ~w(origin destination amount signature)a
  end

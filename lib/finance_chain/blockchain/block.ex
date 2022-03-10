@@ -39,7 +39,8 @@ defmodule FinanceChain.BlockChain.Block do
     __MODULE__.new(1_599_909_623_805_627, "-", %Wallet{
       origin: 0,
       destination: 0,
-      amount: 0
+      amount: 0,
+      signature: "GENISIS"
     })
   end
 

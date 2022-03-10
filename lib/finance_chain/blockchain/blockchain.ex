@@ -49,37 +49,4 @@ defmodule FinanceChain.BlockChain do
     current_block.hash == Block.block_hash(current_block)
   end
 
-  def total_amount_for_origin([],_) do
-    0
-  end
-
-  def total_amount_for_origin([a|b],originID) when a.data.origin == originID do
-      a.data.amount + total_amount_for_origin(b,originID)
-  end
-
-  def total_amount_for_origin([a|b],originID) when a.data.origin != originID do
-      total_amount_for_origin(b,originID)
-  end
-
-  def total_amount_for_destination([],_) do
-    0
-  end
-
-  def total_amount_for_destination([a|b],destinationID) when a.data.destination == destinationID do
-      a.data.amount + total_amount_for_destination(b,destinationID)
-  end
-
-  def total_amount_for_destination([a|b],destinationID) when a.data.destination != destinationID do
-      total_amount_for_destination(b,destinationID)
-  end
-
-  def total_amount_for_origin_and_destination([],_) do
-    0
-  end
-
-  def total_amount( %__MODULE__{chain: chain}, originID) do
-     total_amount_for_destination(chain, originID) - total_amount_for_origin(chain, originID)
-  end
-
-
 end
