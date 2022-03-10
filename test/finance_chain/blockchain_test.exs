@@ -113,7 +113,7 @@ defmodule BlockChain.BlockchainTest do
           amount: 100,
         })
 
-      assert BlockChain.total_amount(blockchain, 0) == 200 && BlockChain.total_amount(blockchain, 1) == 200
+      assert BlockChain.total_amount(blockchain, 0) == 0 && BlockChain.total_amount(blockchain, 1) == 0
     end
 
   end

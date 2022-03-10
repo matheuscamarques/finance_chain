@@ -54,7 +54,7 @@ defmodule FinanceChain.BlockChain do
   end
 
   def total_amount_for_origin([a|b],originID) when a.data.origin == originID do
-      a.data.amount - total_amount_for_origin(b,originID)
+      a.data.amount + total_amount_for_origin(b,originID)
   end
 
   def total_amount_for_origin([a|b],originID) when a.data.origin != originID do
@@ -77,8 +77,8 @@ defmodule FinanceChain.BlockChain do
     0
   end
 
-  def total_amount(blockchain = %__MODULE__{chain: chain}, originID) do
-    total_amount_for_origin(blockchain.chain, originID) + total_amount_for_destination(blockchain.chain, originID)
+  def total_amount( %__MODULE__{chain: chain}, originID) do
+     total_amount_for_destination(chain, originID) - total_amount_for_origin(chain, originID)
   end
 
 
