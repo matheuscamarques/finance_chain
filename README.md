@@ -45,7 +45,8 @@ FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.send_money(%{
 
 FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.send_money(%{ origin: 1, destination: 1, amount: 10})
 
-```
+``` 
+- Só um rascunho provavelmente já esta defasado mas a lógica continua.
 
 --
 # Reset state before starting tests
