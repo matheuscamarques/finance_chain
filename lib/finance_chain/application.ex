@@ -13,7 +13,7 @@ defmodule FinanceChain.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: FinanceChain.PubSub},
       # Start the Endpoint (http/https)
-      FinanceChainWeb.Endpoint
+      FinanceChainWeb.Endpoint,
       # Start a worker by calling: FinanceChain.Worker.start_link(arg)
       # {FinanceChain.Worker, arg}
     ]
@@ -22,6 +22,8 @@ defmodule FinanceChain.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: FinanceChain.Supervisor]
     Supervisor.start_link(children, opts)
+
+    FinanceChain.BlockChain.Supervisor.start_link(name: FinanceChain.BlockChain.Supervisor)
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -17,3 +17,28 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
 # finance_chain
+
+
+
+
+# Code Examples
+
+:sys.get_state(FinanceChain.BlockChain.Server)
+
+
+FinanceChain.BlockChain.Server.get_blockchain(FinanceChain.BlockChain.Server)
+
+FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.get_blockchain()
+
+
+FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.get_blockchain() |> FinanceChain.BlockChain.total_amount(0)
+
+pid = FinanceChain.BlockChain.Server
+FinanceChain.BlockChain.Server.send_money(pid,%{
+  origin: 1,
+  destiny: 0,
+  amount: 1000
+})
+
+
+FinanceChain.BlockChain.Server.send_money(FinanceChain.BlockChain.Server,%{ origin: 1, destination: 1, amount: 10})
