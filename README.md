@@ -19,35 +19,6 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 # finance_chain
 
 
-
-
-# Code Examples
-```elixir
-:sys.get_state(FinanceChain.BlockChain.Server)
-
-
-FinanceChain.BlockChain.Server.get_blockchain(FinanceChain.BlockChain.Server)
-
-FinanceChain.BlockChain.Server 
-|> FinanceChain.BlockChain.Server.get_blockchain()
-
-
-FinanceChain.BlockChain.Server 
-|> FinanceChain.BlockChain.Server.get_blockchain() 
-|> FinanceChain.BlockChain.total_amount(0)
-
-FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.send_money(%{
-  origin: 1,
-  destiny: 0,
-  amount: 1000
-})
-
-
-FinanceChain.BlockChain.Server |> FinanceChain.BlockChain.Server.send_money(%{ origin: 1, destination: 1, amount: 10})
-
-``` 
-- Só um rascunho provavelmente já esta defasado mas a lógica continua.
-
 --
 # Reset state before starting tests
 
