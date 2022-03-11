@@ -8,17 +8,11 @@ To start your Phoenix server:
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+# Main problem
 
-## Learn more
+A financial api where it is possible to add remove credits and with specific endpoints for use. When I received the problem, I didn't really know what I could use or how I could solve it. In that I remembered that I was studying about blockchains and had also read some Erlang Org Articles, that both Erlang and Elixir could solve these problems. I sought to study Elixir in parallel despite knowing the syntax of Elixir/Erlang theory and practice are different things and I needed both in this implementation. I ask for your patience in finding errors. I ask you to report it in ISSUES.
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
 # finance_chain
-
-
 --
 # Reset state before starting tests
 
