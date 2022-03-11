@@ -10,10 +10,17 @@ defmodule FinanceChain.Services.BlockChain do
   def id_exist?(id) do
     blockchain = BlockChain.get_blockchain()
 
-    if(Utils.search(blockchain, id) == 0) do
+    if Utils.search(blockchain, id) == 0 do
       false
     else
       true
+    end
+  end
+
+  def get_balance(id) do
+    case id_exist?(id) do
+      false -> {:err,get_balance_for_non_existing_account(id)}
+      true -> {:ok,get_balance_for_existing_account(id)}
     end
   end
 

@@ -6,9 +6,9 @@ defmodule FinanceChain.BlockChain.Wallet do
 
   @derive {Jason.Encoder, only: [:origin,:destination,:amount]}
   @type t::%Wallet{
-          origin:  Int.t(),
-          destination: Int.t(),
-          amount: Int.t(),
+          origin:  pos_integer(),
+          destination: pos_integer(),
+          amount: pos_integer(),
           signature: String.t()
         }
 

@@ -4,20 +4,21 @@ defmodule FinanceChainWeb.EventController do
   alias FinanceChain.BlockChain.Wallet
   def reset(conn,_) do
     BlockChain.reset()
-    conn |> put_status(200) |> text("OK")
+    conn
+    |> put_status(200)
+    |> text("OK")
   end
   # GET /balance?account_id=1234
   def balance(conn, %{"account_id" => account_id}) do
-    if BlockChain.id_exist?(account_id) == false do
-      res = BlockChain.get_balance_for_non_existing_account(account_id)
-      conn
-      |> put_status(404)
-      |> json(res)
-    else
-      res = BlockChain.get_balance_for_existing_account(account_id)
-      conn
-      |> put_status(200)
-      |> json(res)
+    case BlockChain.get_balance(account_id) do
+      {:err, balance} ->
+        conn
+        |> put_status(404)
+        |> json(balance)
+      {:ok, balance} ->
+        conn
+        |> put_status(200)
+        |> json(balance)
     end
   end
 
@@ -35,10 +36,11 @@ defmodule FinanceChainWeb.EventController do
         signature: "deposit"
     }
 
-    {:ok,deposit} = BlockChain.deposit(wallet)
-    conn
-     |> put_status(201)
-     |> json(deposit)
+    case BlockChain.deposit(wallet) do
+      {:ok,deposit} -> conn
+        |> put_status(201)
+        |> json(deposit)
+    end
   end
 
   def post_event(conn, %{
@@ -54,16 +56,13 @@ defmodule FinanceChainWeb.EventController do
         signature: "withdraw"
     }
 
-    {atom,withdraw} = BlockChain.withdraw(wallet)
-
-    if( atom == :ok ) do
-      conn
-       |> put_status(201)
-       |> json(withdraw)
-    else
-      conn
-       |> put_status(404)
-       |> json(withdraw)
+    case BlockChain.withdraw(wallet) do
+      {:ok, withdraw} -> conn
+        |> put_status(201)
+        |> json(withdraw)
+      {:err, error} -> conn
+        |> put_status(400)
+        |> json(error)
     end
   end
 
@@ -82,16 +81,13 @@ defmodule FinanceChainWeb.EventController do
         signature: "transfer"
     }
 
-    {atom,transfer} = BlockChain.transfer(wallet)
-
-    if( atom == :ok ) do
-      conn
-       |> put_status(201)
-       |> json(transfer)
-    else
-      conn
-       |> put_status(404)
-       |> json(transfer)
+    case BlockChain.transfer(wallet) do
+      {:ok,transfer} -> conn
+        |> put_status(201)
+        |> json(transfer)
+      {:err, error} -> conn
+        |> put_status(400)
+        |> json(error)
     end
   end
 
