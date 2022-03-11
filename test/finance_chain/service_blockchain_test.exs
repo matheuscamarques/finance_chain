@@ -75,7 +75,7 @@ defmodule FinanceChain.Services.BlockChainTest do
         amount: 10
       })
 
-      assert 0 ==
+      assert {:err,0 }==
                BlockChain.withdraw_from_non_existing_account(%Wallet{
                  signature: "withdraw",
                  destination: 0,
@@ -163,7 +163,7 @@ defmodule FinanceChain.Services.BlockChainTest do
         amount: 5
       })
 
-      assert 0 == BlockChain.transfer_from_non_existing_account(%Wallet{
+      assert {:err,0} == BlockChain.transfer_from_non_existing_account(%Wallet{
         signature: "transfer",
         destination: 300,
         origin: 200,
