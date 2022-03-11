@@ -55,6 +55,8 @@ defmodule FinanceChain.Services.Utils do
     total_amount_for_destination(b, destinationID)
   end
 
-
+  def total_amount_for_origin_and_destination([], _) do
+    0
+  end
 
 end
