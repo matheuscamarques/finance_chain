@@ -1,12 +1,20 @@
 defmodule FinanceChainWeb.Router do
   use FinanceChainWeb, :router
 
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   scope "/api", FinanceChainWeb do
     pipe_through :api
+  end
+
+  scope "/", FinanceChainWeb do
+    pipe_through :api
+    get "/balance" ,EventController, :balance
+    post "/event" ,EventController, :post_event
+    post "/reset" ,EventController, :reset
   end
 
   # Enables LiveDashboard only for development

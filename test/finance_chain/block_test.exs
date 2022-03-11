@@ -14,6 +14,7 @@ defmodule FinanceChain.BlockChain.BlockTest do
                  origin: 0,
                  destination: 0,
                  amount: 0,
+                 signature: "GENISIS"
                },
                hash: "CB2760DE57CA7C9E2BFBEFB878787EE5B0D2F5B8789DD572BFD933396302252E",
                last_hash: "-",

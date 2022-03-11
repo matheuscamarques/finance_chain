@@ -1,4 +1,4 @@
-defmodule BlockChain.BlockchainTest do
+defmodule FinanceChain.BlockChain.BlockchainTest do
   @moduledoc """
   This module contains test related to a blockchain
   """
@@ -18,6 +18,7 @@ defmodule BlockChain.BlockchainTest do
                   origin: 0,
                   destination: 0,
                   amount: 0,
+                  signature: "GENISIS"
                },
                hash: "CB2760DE57CA7C9E2BFBEFB878787EE5B0D2F5B8789DD572BFD933396302252E",
                last_hash: "-",
@@ -30,6 +31,7 @@ defmodule BlockChain.BlockchainTest do
         origin: 0,
         destination: 1,
         amount: 1,
+        signature: "TEST"
       }
       blockchain = BlockChain.add_block(blockchain, data)
       [_, block] = blockchain.chain
@@ -42,6 +44,7 @@ defmodule BlockChain.BlockchainTest do
         origin: 0,
         destination: 0,
         amount: 100,
+        signature: "TEST"
       })
       # assert if blockchain is valid
       assert BlockChain.valid_chain?(blockchain)
@@ -57,17 +60,20 @@ defmodule BlockChain.BlockchainTest do
           origin: 0,
           destination: 0,
           amount: 100,
+          signature: "TEST"
         })
         |> BlockChain.add_block(%Wallet{
           origin: 0,
           destination: 0,
           amount: 100,
+          signature: "TEST"
         })
 
         |> BlockChain.add_block(%Wallet{
           origin: 0,
           destination: 0,
           amount: 100,
+          signature: "TEST"
         })
 
       # validate if blockchain is valid
@@ -78,42 +84,13 @@ defmodule BlockChain.BlockchainTest do
         origin: 0,
         destination: 0,
         amount: 100,
+        signature: "TEST"
       })
 
       blockchain = %BlockChain{chain: List.replace_at(blockchain.chain, index, tempered_block)}
 
       # should invalidate the blockchain
       refute BlockChain.valid_chain?(blockchain)
-    end
-
-    test "count total amoun for origin and destination",%{
-      blockchain: blockchain
-    } do
-      blockchain =
-        blockchain
-        |> BlockChain.add_block(%Wallet{
-          origin: 1,
-          destination: 0,
-          amount: 100,
-        })
-        |> BlockChain.add_block(%Wallet{
-          origin: 1,
-          destination: 0,
-          amount: 100,
-        })
-
-        |> BlockChain.add_block(%Wallet{
-          origin: 0,
-          destination: 1,
-          amount: 100,
-        })
-        |> BlockChain.add_block(%Wallet{
-          origin: 0,
-          destination: 1,
-          amount: 100,
-        })
-
-      assert BlockChain.total_amount(blockchain, 0) == 0 && BlockChain.total_amount(blockchain, 1) == 0
     end
 
   end
