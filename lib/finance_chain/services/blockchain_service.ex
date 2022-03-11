@@ -17,6 +17,13 @@ defmodule FinanceChain.Services.BlockChain do
     end
   end
 
+  def get_balance(id) do
+    case id_exist?(id) do
+      false -> {:err,get_balance_for_non_existing_account(id)}
+      true -> {:ok,get_balance_for_existing_account(id)}
+    end
+  end
+
   def get_balance_for_non_existing_account(id) do
     BlockChain.get_balance(id)
   end

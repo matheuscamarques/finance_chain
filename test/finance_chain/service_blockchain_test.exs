@@ -75,7 +75,7 @@ defmodule FinanceChain.Services.BlockChainTest do
         amount: 10
       })
 
-      assert {:err,0 }==
+      assert {:err,0 } ==
                BlockChain.withdraw_from_non_existing_account(%Wallet{
                  signature: "withdraw",
                  destination: 0,
