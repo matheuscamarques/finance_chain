@@ -8,8 +8,7 @@ config :finance_chain, FinanceChainWeb.Endpoint,
   server: false
 
 # In test we don't send emails.
-config :finance_chain, FinanceChain.Mailer,
-  adapter: Swoosh.Adapters.Test
+config :finance_chain, FinanceChain.Mailer, adapter: Swoosh.Adapters.Test
 
 # Print only warnings and errors during test
 config :logger, level: :warn

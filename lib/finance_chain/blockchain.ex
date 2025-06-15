@@ -1,52 +1,82 @@
 defmodule FinanceChain.BlockChain do
   @moduledoc """
-  This module contains the blockchain related functions
+  O módulo de contexto e a API pública para interagir com a FinanceChain.
   """
-  alias __MODULE__
-  alias FinanceChain.BlockChain.Block
+  alias FinanceChain.BlockChain.{Chain, Server, Wallet}
 
-  defstruct ~w(chain)a
+  # Wrapper para o GenServer. O nome do processo é definido no Supervisor.
+  @server_name Server
 
-  @type t :: %BlockChain{
-          chain: [Block.t({})]
-        }
+  # =================================================================
+  #  API PÚBLICA
+  # =================================================================
 
-  @spec new :: BlockChain.t()
-  def new() do
-    %__MODULE__{}
-    |> add_genesis()
+  def reset, do: Server.reset_blockchain(@server_name)
+
+  def get_balance(account_id) do
+    chain_state = Server.get_blockchain(@server_name)
+    all_accounts = Chain.all_accounts(chain_state)
+
+    if MapSet.member?(all_accounts, account_id) do
+      balance = Chain.total_amount(chain_state, account_id)
+      {:ok, balance}
+    else
+      # Contrato: conta não existe, retorna erro com saldo 0
+      {:error, 0}
+    end
   end
 
-  defp add_genesis(blockchain = %__MODULE__{}) do
-    %{blockchain | chain: [Block.genesis()]}
-  end
-  @spec add_block(BlockChain.t(), any) :: BlockChain.t()
-  def add_block(blockchain = %__MODULE__{chain: chain}, data) do
-    {last_block, _} = List.pop_at(chain, -1)
-
-    %{blockchain | chain: chain ++ [Block.mine_block(last_block, data)]}
-  end
-
-  @spec valid_chain?(BlockChain.t()) :: boolean()
-  def valid_chain?(%__MODULE__{chain: chain}) do
-    chain
-    |> Enum.chunk_every(2, 1, :discard)
-    |> Enum.all?(fn [prev_block, block] ->
-      valid_last_hash?(prev_block, block) && valid_block_hash?(prev_block)
-    end)
+  def deposit(%Wallet{} = wallet) do
+    case Server.send_event(@server_name, wallet) do
+      :ok ->
+        # get_balance agora retorna {:ok, _} ou {:error, _}, mas depois de um depósito, sempre será :ok
+        {:ok, new_balance} = get_balance(wallet.destination)
+        # Contrato: A resposta deve ser um mapa com a chave "destination"
+        {:ok, %{destination: %{id: wallet.destination, balance: new_balance}}}
+    end
   end
 
-  # Private functions
-
-  defp valid_last_hash?(
-         %Block{hash: hash} = _last_block,
-         %Block{last_hash: last_hash} = _current_block
-       ) do
-    hash == last_hash
+  def withdraw(%Wallet{origin: origin, amount: amount_to_withdraw} = wallet) do
+    case get_balance(origin) do
+      {:error, _balance} ->
+        # Contrato: conta não existe
+        {:error, :account_not_found}
+      {:ok, current_balance} when current_balance < amount_to_withdraw ->
+        # Contrato: saldo insuficiente
+        {:error, :insufficient_funds}
+      {:ok, _current_balance} ->
+        # Lógica de sucesso
+        Server.send_event(@server_name, wallet)
+        {:ok, new_balance} = get_balance(origin)
+        # Contrato: A resposta deve ser um mapa com a chave "origin"
+        {:ok, %{origin: %{id: wallet.origin, balance: new_balance}}}
+    end
   end
 
-  defp valid_block_hash?(current_block) do
-    current_block.hash == Block.block_hash(current_block)
+  def transfer(
+        %Wallet{origin: origin, destination: destination, amount: amount_to_transfer} = wallet
+      ) do
+    # A estrutura `with` é ideal para encadear operações que podem falhar.
+    with {:ok, current_balance} <- get_balance(origin),
+         true <- current_balance >= amount_to_transfer,
+         false <- origin == destination do
+      # Bloco DO: executado apenas se todas as cláusulas acima passarem
+      Server.send_event(@server_name, wallet)
+      {:ok, origin_balance} = get_balance(origin)
+      # A conta de destino pode não existir, então pegamos o saldo dela de qualquer forma
+      chain_state = Server.get_blockchain(@server_name)
+      destination_balance = Chain.total_amount(chain_state, destination)
+      # Contrato: A resposta deve ser um mapa com "origin" e "destination"
+      {:ok,
+       %{
+         origin: %{id: origin, balance: origin_balance},
+         destination: %{id: destination, balance: destination_balance}
+       }}
+    else
+      # Bloco ELSE: executado se qualquer cláusula acima falhar
+      {:error, _} -> {:error, :account_not_found}
+      false -> {:error, :insufficient_funds}
+      true -> {:error, :same_account_transfer}
+    end
   end
-
 end

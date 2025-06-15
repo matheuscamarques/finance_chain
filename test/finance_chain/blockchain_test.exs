@@ -15,10 +15,10 @@ defmodule FinanceChain.BlockChain.BlockchainTest do
     test "should start with the genesis block", %{blockchain: blockchain} do
       assert %Block{
                data: %Wallet{
-                  origin: 0,
-                  destination: 0,
-                  amount: 0,
-                  signature: "GENISIS"
+                 origin: 0,
+                 destination: 0,
+                 amount: 0,
+                 signature: "GENISIS"
                },
                hash: "CB2760DE57CA7C9E2BFBEFB878787EE5B0D2F5B8789DD572BFD933396302252E",
                last_hash: "-",
@@ -33,6 +33,7 @@ defmodule FinanceChain.BlockChain.BlockchainTest do
         amount: 1,
         signature: "TEST"
       }
+
       blockchain = BlockChain.add_block(blockchain, data)
       [_, block] = blockchain.chain
       assert block.data == data
@@ -40,16 +41,17 @@ defmodule FinanceChain.BlockChain.BlockchainTest do
 
     test "validate a chain", %{blockchain: blockchain} do
       # add block into blockchain
-      blockchain = BlockChain.add_block(blockchain, %Wallet{
-        origin: 0,
-        destination: 0,
-        amount: 100,
-        signature: "TEST"
-      })
+      blockchain =
+        BlockChain.add_block(blockchain, %Wallet{
+          origin: 0,
+          destination: 0,
+          amount: 100,
+          signature: "TEST"
+        })
+
       # assert if blockchain is valid
       assert BlockChain.valid_chain?(blockchain)
     end
-
 
     test "when we temper hash in existing chain", %{
       blockchain: blockchain
@@ -68,7 +70,6 @@ defmodule FinanceChain.BlockChain.BlockchainTest do
           amount: 100,
           signature: "TEST"
         })
-
         |> BlockChain.add_block(%Wallet{
           origin: 0,
           destination: 0,
@@ -80,22 +81,21 @@ defmodule FinanceChain.BlockChain.BlockchainTest do
       assert BlockChain.valid_chain?(blockchain)
       # temper the blockchain, assume at location 2
       index = 2
-      tempered_block = put_in(Enum.at(blockchain.chain, index).hash, %Wallet{
-        origin: 0,
-        destination: 0,
-        amount: 100,
-        signature: "TEST"
-      })
+
+      tempered_block =
+        put_in(Enum.at(blockchain.chain, index).hash, %Wallet{
+          origin: 0,
+          destination: 0,
+          amount: 100,
+          signature: "TEST"
+        })
 
       blockchain = %BlockChain{chain: List.replace_at(blockchain.chain, index, tempered_block)}
 
       # should invalidate the blockchain
       refute BlockChain.valid_chain?(blockchain)
     end
-
   end
-
-
 
   defp initialize_blockchain(context), do: Map.put(context, :blockchain, BlockChain.new())
 end

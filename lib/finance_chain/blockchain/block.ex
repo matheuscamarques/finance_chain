@@ -69,5 +69,4 @@ defmodule FinanceChain.BlockChain.Block do
     data = "#{timestamp}:#{last_hash}:#{Jason.encode!(data)}"
     Base.encode16(:crypto.hash(:sha256, data))
   end
-
 end

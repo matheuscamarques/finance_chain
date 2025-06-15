@@ -75,7 +75,7 @@ defmodule FinanceChain.Services.BlockChainTest do
         amount: 10
       })
 
-      assert {:err,0 } ==
+      assert {:err, 0} ==
                BlockChain.withdraw_from_non_existing_account(%Wallet{
                  signature: "withdraw",
                  destination: 0,
@@ -163,14 +163,14 @@ defmodule FinanceChain.Services.BlockChainTest do
         amount: 5
       })
 
-      assert {:err,0} == BlockChain.transfer_from_non_existing_account(%Wallet{
-        signature: "transfer",
-        destination: 300,
-        origin: 200,
-        amount: 5
-      })
+      assert {:err, 0} ==
+               BlockChain.transfer_from_non_existing_account(%Wallet{
+                 signature: "transfer",
+                 destination: 300,
+                 origin: 200,
+                 amount: 5
+               })
     end
-
   end
 
   defp initialize_blockchain(context), do: Map.put(context, :blockchain, BlockChain.reset())

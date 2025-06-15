@@ -1,20 +1,24 @@
 defmodule FinanceChainWeb.EventController do
   use FinanceChainWeb, :controller
-  alias FinanceChain.Services.BlockChain
+  alias FinanceChain.BlockChain
   alias FinanceChain.BlockChain.Wallet
-  def reset(conn,_) do
+
+  def reset(conn, _) do
     BlockChain.reset()
+
     conn
     |> put_status(200)
     |> text("OK")
   end
+
   # GET /balance?account_id=1234
   def balance(conn, %{"account_id" => account_id}) do
     case BlockChain.get_balance(account_id) do
-      {:err, balance} ->
+      {:error, balance} ->
         conn
         |> put_status(404)
         |> json(balance)
+
       {:ok, balance} ->
         conn
         |> put_status(200)
@@ -22,74 +26,62 @@ defmodule FinanceChainWeb.EventController do
     end
   end
 
-
+  # POST /event (type: deposit)
   def post_event(conn, %{
-    "type" => "deposit",
-    "destination" => destination,
-    "amount" => amount,
-  }) do
-
+        "type" => "deposit",
+        "destination" => destination,
+        "amount" => amount
+      }) do
     wallet = %Wallet{
-        origin: 0,
-        destination: destination,
-        amount: amount,
-        signature: "deposit"
+      origin: 0,
+      destination: destination,
+      amount: amount,
+      signature: "deposit"
     }
 
     case BlockChain.deposit(wallet) do
-      {:ok,deposit} -> conn
+      {:ok, deposit} ->
+        conn
         |> put_status(201)
         |> json(deposit)
     end
   end
 
-  def post_event(conn, %{
-    "type" => "withdraw",
-    "origin" => origin,
-    "amount" => amount,
-  }) do
-
-    wallet = %Wallet{
-        origin: origin,
-        destination: 0,
-        amount: amount,
-        signature: "withdraw"
-    }
+  # POST /event (type: withdraw)
+  def post_event(conn, %{"type" => "withdraw", "origin" => origin, "amount" => amount}) do
+    wallet = %Wallet{origin: origin, destination: 0, amount: amount, signature: "withdraw"}
 
     case BlockChain.withdraw(wallet) do
-      {:ok, withdraw} -> conn
-        |> put_status(201)
-        |> json(withdraw)
-      {:err, error} -> conn
-        |> put_status(404)
-        |> json(error)
+      {:ok, withdraw} ->
+        conn |> put_status(201) |> json(withdraw)
+      {:error, :account_not_found} ->
+        conn |> put_status(404) |> json(0)
+      {:error, :insufficient_funds} ->
+        conn |> put_status(422) |> json(%{error: "insufficient funds"})
     end
   end
 
-
-  def post_event(conn, %{
-    "type" => "transfer",
-    "origin" => origin,
-    "amount" => amount,
-    "destination" => destination,
-  }) do
-
+  # POST /event (type: transfer)
+  def post_event(
+        conn,
+        %{"type" => "transfer", "origin" => origin, "amount" => amount, "destination" => destination}
+      ) do
     wallet = %Wallet{
-        origin: origin,
-        destination: destination,
-        amount: amount,
-        signature: "transfer"
+      origin: origin,
+      destination: destination,
+      amount: amount,
+      signature: "transfer"
     }
 
     case BlockChain.transfer(wallet) do
-      {:ok,transfer} -> conn
-        |> put_status(201)
-        |> json(transfer)
-      {:err, error} -> conn
-        |> put_status(404)
-        |> json(error)
+      {:ok, transfer} ->
+        conn |> put_status(201) |> json(transfer)
+      {:error, :account_not_found} ->
+        conn |> put_status(404) |> json(0)
+      {:error, :insufficient_funds} ->
+        conn |> put_status(422) |> json(%{error: "insufficient funds"})
+      {:error, :same_account_transfer} ->
+        conn |> put_status(422) |> json(%{error: "cannot transfer to the same account"})
     end
   end
-
-
 end

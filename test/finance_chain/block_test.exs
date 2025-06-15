@@ -35,10 +35,11 @@ defmodule FinanceChain.BlockChain.BlockTest do
       # setup the data
       timestamp = DateTime.utc_now() |> DateTime.to_unix(1_000_000)
       last_hash = "random_hash"
+
       data = %Wallet{
         origin: 0,
         destination: 0,
-        amount: 0,
+        amount: 0
       }
 
       assert %Block{timestamp: ^timestamp, hash: _hash, last_hash: ^last_hash, data: ^data} =

@@ -1,6 +1,7 @@
 defmodule FinanceChainWeb.EventControllerTest do
   use FinanceChainWeb.ConnCase, async: true
   alias FinanceChainWeb.EventController
+
   describe "Geral" do
     test "Reset state before starting tests", %{conn: conn} do
       # TODO implements this tests

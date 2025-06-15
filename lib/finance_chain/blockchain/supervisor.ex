@@ -8,7 +8,7 @@ defmodule FinanceChain.BlockChain.Supervisor do
   @impl true
   def init(:ok) do
     children = [
-      {FinanceChain.BlockChain.Server,name: FinanceChain.BlockChain.Server}
+      {FinanceChain.BlockChain.Server, name: FinanceChain.BlockChain.Server}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

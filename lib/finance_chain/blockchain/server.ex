@@ -1,41 +1,44 @@
 defmodule FinanceChain.BlockChain.Server do
   use GenServer
-  alias FinanceChain.BlockChain
-  # alias FinanceChain.BlockChain.Wallet
+  # <<< MUDANÇA IMPORTANTE
+  alias FinanceChain.BlockChain.Chain
 
-  def init(blockchain) do
-    {:ok, blockchain}
+  def init(_opts) do
+    # Agora chama a função `new` do módulo Chain
+    {:ok, Chain.new()}
   end
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, FinanceChain.BlockChain.new(), opts)
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   def send_event(pid, value) do
-    GenServer.call(pid, {:add, value})
+    # Vamos usar uma tupla para o handle_call ficar mais específico
+    GenServer.call(pid, {:add_block, value})
   end
 
-  @spec get_blockchain(atom | pid | {atom, any} | {:via, atom, any}) :: any
   def get_blockchain(pid) do
-    GenServer.call(pid, {:get})
+    GenServer.call(pid, :get_state)
   end
 
   def reset_blockchain(pid) do
-    GenServer.call(pid, {:reset})
+    GenServer.call(pid, :reset)
   end
 
-  def handle_call({:add, value}, _from, state) do
-    state = BlockChain.add_block(state, value)
-    {:reply, "#sended value", state}
+  # handle_call com a mudança
+  def handle_call({:add_block, value}, _from, state) do
+    # Chama a função `add_block` do módulo Chain
+    new_state = Chain.add_block(state, value)
+    {:reply, :ok, new_state}
   end
 
-  def handle_call({:get}, _from, state) do
-    {:reply, state ,state}
+  def handle_call(:get_state, _from, state) do
+    {:reply, state, state}
   end
 
-  def handle_call({:reset}, _from, _state) do
-    state = BlockChain.new()
-    {:reply, "#reset blockchain", state}
+  def handle_call(:reset, _from, _state) do
+    # Reinicia o estado usando o módulo Chain
+    new_state = Chain.new()
+    {:reply, :ok, new_state}
   end
-
 end
