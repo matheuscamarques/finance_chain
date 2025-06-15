@@ -61,7 +61,7 @@ defmodule FinanceChainWeb.EventController do
         |> put_status(201)
         |> json(withdraw)
       {:err, error} -> conn
-        |> put_status(400)
+        |> put_status(404)
         |> json(error)
     end
   end
@@ -86,7 +86,7 @@ defmodule FinanceChainWeb.EventController do
         |> put_status(201)
         |> json(transfer)
       {:err, error} -> conn
-        |> put_status(400)
+        |> put_status(404)
         |> json(error)
     end
   end
