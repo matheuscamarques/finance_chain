@@ -22,16 +22,16 @@ defmodule FinanceChainWeb do
       use Phoenix.Controller, namespace: FinanceChainWeb
 
       import Plug.Conn
-      import FinanceChainWeb.Gettext
+      use Gettext, backend: FinanceChainWeb.Gettext
       alias FinanceChainWeb.Router.Helpers, as: Routes
     end
   end
 
   def view do
     quote do
-      use Phoenix.View,
-        root: "lib/finance_chain_web/templates",
-        namespace: FinanceChainWeb
+      # use Gettext, backend: FinanceChainWeb.Gettext,
+      #  root: "lib/finance_chain_web/templates",
+      #   namespace: FinanceChainWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
@@ -54,17 +54,17 @@ defmodule FinanceChainWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import FinanceChainWeb.Gettext
+      use Gettext, backend: FinanceChainWeb.Gettext
     end
   end
 
   defp view_helpers do
     quote do
       # Import basic rendering functionality (render, render_layout, etc)
-      import Phoenix.View
+      # import Phoenix.View
 
       import FinanceChainWeb.ErrorHelpers
-      import FinanceChainWeb.Gettext
+      use Gettext, backend: FinanceChainWeb.Gettext
       alias FinanceChainWeb.Router.Helpers, as: Routes
     end
   end

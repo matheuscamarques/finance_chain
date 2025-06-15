@@ -14,16 +14,14 @@ defmodule FinanceChain.Application do
       {Phoenix.PubSub, name: FinanceChain.PubSub},
       # Start the Endpoint (http/https)
       FinanceChainWeb.Endpoint,
-      # Start a worker by calling: FinanceChain.Worker.start_link(arg)
-      # {FinanceChain.Worker, arg}
+      # CORREÇÃO AQUI: Especifique o supervisor filho como uma tupla {Module, opts}
+      {FinanceChain.BlockChain.Supervisor, name: FinanceChain.BlockChain.Supervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: FinanceChain.Supervisor]
     Supervisor.start_link(children, opts)
-
-    FinanceChain.BlockChain.Supervisor.start_link(name: FinanceChain.BlockChain.Supervisor)
   end
 
   # Tell Phoenix to update the endpoint configuration
