@@ -77,6 +77,7 @@ defmodule FinanceChainWeb.EventControllerTest do
       conn = post(conn, "/event", payload)
 
       assert conn.status == 201
+
       assert json_response(conn, 201) == %{
                "destination" => %{"id" => "100", "balance" => 25}
              }
@@ -127,9 +128,11 @@ defmodule FinanceChainWeb.EventControllerTest do
         "destination" => "200",
         "amount" => 20
       }
+
       conn = post(conn, "/event", payload)
 
       assert conn.status == 201
+
       assert json_response(conn, 201) == %{
                "origin" => %{"id" => "100", "balance" => 30},
                "destination" => %{"id" => "200", "balance" => 30}
@@ -139,10 +142,12 @@ defmodule FinanceChainWeb.EventControllerTest do
     test "returns 404 when transferring from a non-existing account", %{conn: conn} do
       payload = %{
         "type" => "transfer",
-        "origin" => "999", # Conta não existe
+        # Conta não existe
+        "origin" => "999",
         "destination" => "200",
         "amount" => 15
       }
+
       conn = post(conn, "/event", payload)
 
       assert conn.status == 404
