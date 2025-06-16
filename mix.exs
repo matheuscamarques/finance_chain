@@ -4,7 +4,7 @@ defmodule FinanceChain.MixProject do
   def project do
     [
       app: :finance_chain,
-      version: "0.1.0",
+      version: "0.0.3",
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
