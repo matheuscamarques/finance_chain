@@ -1,33 +1,36 @@
 defmodule FinanceChain.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
-  @moduledoc false
+  @moduledoc """
+  The main application module for FinanceChain.
+  It defines the supervision tree for all application processes.
+  """
 
   use Application
 
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
+      # Standard Phoenix components
       FinanceChainWeb.Telemetry,
-      # Start the PubSub system
       {Phoenix.PubSub, name: FinanceChain.PubSub},
-      # Start the Endpoint (http/https)
-      FinanceChainWeb.Endpoint,
-      # CORREÇÃO AQUI: Especifique o supervisor filho como uma tupla {Module, opts}
-      {FinanceChain.BlockChain.Supervisor, name: FinanceChain.BlockChain.Supervisor}
+
+      # 🏁 Concurrent blockchain components
+      # 1. Registry to map account_id -> pid. Ensures unique account IDs.
+      {Registry, keys: :unique, name: FinanceChain.Registry},
+      # 2. Dynamic supervisor for account processes. It will start and stop AccountServer processes as needed.
+      {DynamicSupervisor, strategy: :one_for_one, name: FinanceChain.AccountSupervisor},
+
+      # Start the Endpoint (web server) last, as it depends on other components
+      FinanceChainWeb.Endpoint
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
+    # Define the strategy for the main supervisor and its name
     opts = [strategy: :one_for_one, name: FinanceChain.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
+    # Handles dynamic configuration changes for the Phoenix Endpoint.
     FinanceChainWeb.Endpoint.config_change(changed, removed)
     :ok
   end

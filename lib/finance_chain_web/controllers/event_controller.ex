@@ -3,6 +3,10 @@ defmodule FinanceChainWeb.EventController do
   alias FinanceChain.BlockChain
   alias FinanceChain.BlockChain.Wallet
 
+  @doc """
+  Resets the entire blockchain state, terminating all account processes.
+  This is primarily for development and testing purposes.
+  """
   def reset(conn, _) do
     BlockChain.reset()
 
@@ -11,7 +15,17 @@ defmodule FinanceChainWeb.EventController do
     |> text("OK")
   end
 
-  # GET /balance?account_id=1234
+  @doc """
+  Retrieves the balance for a given account ID.
+
+  ## Parameters
+    - `conn`: The Plug connection.
+    - `account_id`: The ID of the account whose balance is requested.
+
+  ## Returns
+    - `200 OK` with the balance if the account exists.
+    - `404 Not Found` with a balance of `0` if the account does not exist.
+  """
   def balance(conn, %{"account_id" => account_id}) do
     case BlockChain.get_balance(account_id) do
       {:error, balance} ->
@@ -26,12 +40,24 @@ defmodule FinanceChainWeb.EventController do
     end
   end
 
-  # POST /event (type: deposit)
+  @doc """
+  Handles a deposit event, adding funds to a specified destination account.
+
+  ## Parameters
+    - `conn`: The Plug connection.
+    - `destination`: The ID of the account to deposit into.
+    - `amount`: The amount to deposit.
+
+  ## Returns
+    - `201 Created` with the updated account balance information on success.
+  """
   def post_event(conn, %{
         "type" => "deposit",
         "destination" => destination,
         "amount" => amount
       }) do
+    # Create a Wallet struct representing the deposit transaction.
+    # An origin of `0` typically indicates a system-generated deposit (e.g., from an ATM).
     wallet = %Wallet{
       origin: 0,
       destination: destination,
@@ -47,8 +73,22 @@ defmodule FinanceChainWeb.EventController do
     end
   end
 
-  # POST /event (type: withdraw)
+  @doc """
+  Handles a withdraw event, deducting funds from a specified origin account.
+
+  ## Parameters
+    - `conn`: The Plug connection.
+    - `origin`: The ID of the account to withdraw from.
+    - `amount`: The amount to withdraw.
+
+  ## Returns
+    - `201 Created` with the updated account balance information on success.
+    - `404 Not Found` if the origin account does not exist.
+    - `422 Unprocessable Entity` if there are insufficient funds in the origin account.
+  """
   def post_event(conn, %{"type" => "withdraw", "origin" => origin, "amount" => amount}) do
+    # Create a Wallet struct representing the withdrawal transaction.
+    # A destination of `0` typically indicates funds leaving the system.
     wallet = %Wallet{origin: origin, destination: 0, amount: amount, signature: "withdraw"}
 
     case BlockChain.withdraw(wallet) do
@@ -61,11 +101,26 @@ defmodule FinanceChainWeb.EventController do
     end
   end
 
-  # POST /event (type: transfer)
+  @doc """
+  Handles a transfer event, moving funds from an origin account to a destination account.
+
+  ## Parameters
+    - `conn`: The Plug connection.
+    - `origin`: The ID of the account to transfer from.
+    - `destination`: The ID of the account to transfer to.
+    - `amount`: The amount to transfer.
+
+  ## Returns
+    - `201 Created` with the updated balances of both accounts on success.
+    - `404 Not Found` if the origin account does not exist.
+    - `422 Unprocessable Entity` if there are insufficient funds in the origin account.
+    - `422 Unprocessable Entity` if the origin and destination accounts are the same.
+  """
   def post_event(
         conn,
         %{"type" => "transfer", "origin" => origin, "amount" => amount, "destination" => destination}
       ) do
+    # Create a Wallet struct representing the transfer transaction.
     wallet = %Wallet{
       origin: origin,
       destination: destination,
