@@ -213,6 +213,55 @@ While functional, this system can be significantly enhanced for production envir
 
 ---
 
+
+# Diagram
+```mermaid
+graph TD
+    subgraph "Sistema FinanceChain"
+        A[FinanceChain.Application] --> B(FinanceChain.Supervisor)
+        style A fill:#F0F8FF,stroke:#333,stroke-width:2px
+
+        subgraph "Infraestrutura Principal"
+            B --> C[FinanceChainWeb.Endpoint]
+            B --> D[AccountSupervisor]
+            B --> E{Registry}
+            style B fill:#ADD8E6,stroke:#333,stroke-width:2px
+            style C fill:#FFE4E1,stroke:#333,stroke-width:1px
+            style D fill:#ADD8E6,stroke:#333,stroke-width:2px
+            style E fill:#FFFFE0,stroke:#333,stroke-width:2px
+        end
+
+        subgraph "Serviço Web API"
+            C --> G[FinanceChainWeb.EventController]
+            style G fill:#E6E6FA,stroke:#333,stroke-width:1px
+        end
+
+        subgraph "Lógica de Negócio Blockchain"
+            G --> H[FinanceChain.BlockChain]
+            style H fill:#E0FFFF,stroke:#333,stroke-width:1px
+        end
+
+        subgraph "Gestão de Contas (Um processo por conta)"
+            D -- "Supervisa (inicia/para)" --> I((AccountServer))
+            E -- "Registra PID para" --> I
+            H -- "Encontra/Inicia" --> D
+            H -- "Localiza PID em" --> E
+            H -- "Chama (GenServer.call/cast)" --> I
+            style I fill:#F5F5DC,stroke:#333,stroke-width:2px
+        end
+
+        subgraph "ED da Blockchain"
+            I -- "Gerencia" --> K[Chain]
+            K -- "Composto por" --> L[Block]
+            L -- "Contém Dados de" --> M[Wallet]
+            style K fill:#DCDCDC,stroke:#333,stroke-width:1px
+            style L fill:#DCDCDC,stroke:#333,stroke-width:1px
+            style M fill:#DCDCDC,stroke:#333,stroke-width:1px
+        end
+    end
+
+```
+
 ## Contributing
 
 We welcome contributions! If you find any errors, please report them in the [ISSUES](link-to-your-issues-page-if-any) section.
