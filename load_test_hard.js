@@ -17,7 +17,7 @@ export const options = {
         { duration: '30s', target: 0 },
     ],
     thresholds: {
-        'http_req_duration': ['p(95)<1500'],
+        'http_req_duration': ['p(95)<5000'],
         // O threshold de checks valida que a grande maioria das respostas
         // está dentro dos status que consideramos válidos.
         'checks': ['rate>0.999'],

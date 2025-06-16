@@ -187,9 +187,6 @@ defmodule FinanceChain.BlockChain do
         spec = {AccountServer, account_id}
         DynamicSupervisor.start_child(FinanceChain.AccountSupervisor, spec)
 
-      # If the child was already started by another concurrent call, handle it
-      {:error, {:already_started, pid}} -> {:ok, pid}
-
       # If the pid was directly returned by find_account_server
       pid when is_pid(pid) -> {:ok, pid}
 
